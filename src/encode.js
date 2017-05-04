@@ -9,6 +9,7 @@
  * @flow
  */
 
+import CoreManager from './CoreManager';
 import ParseACL from './ParseACL';
 import ParseFile from './ParseFile';
 import ParseGeoPoint from './ParseGeoPoint';
@@ -17,6 +18,8 @@ import { Op } from './ParseOp';
 import ParseRelation from './ParseRelation';
 
 var toString = Object.prototype.toString;
+
+const isNode = !!CoreManager.get('IS_NODE');
 
 function encode(value: mixed, disallowObjects: boolean, forcePointers: boolean, seen: Array<mixed>): any {
   if (value instanceof ParseObject) {
@@ -42,7 +45,7 @@ function encode(value: mixed, disallowObjects: boolean, forcePointers: boolean, 
     return value.toJSON();
   }
   if (value instanceof ParseFile) {
-    if (!value.url()) {
+    if (!isNode && !value.url()) {
       throw new Error('Tried to encode an unsaved file.');
     }
     return value.toJSON();
